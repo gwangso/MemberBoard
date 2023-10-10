@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{component/config :: config}"></th:block>
+</head>
+<body>
+<div th:replace="~{component/header :: header}"></div>
+<div th:replace="~{component/nav :: nav}"></div>
+
+<div class="row m-5 justify-content-center">
+    <div class="col col-md-8">
+        <div class="card p-5">
+            <form id="save-form" action="/member/save" method="post" enctype="multipart/form-data">
+                <div class="input-group my-3">
+                    <input type="file" class="form-control" name="memberProfile">
+                </div>
+                <div class="input-group my-3">
+                    <span class="input-group-text">이메일</span>
+                    <input class="form-control" name="memberEmail" onblur="duplicate_check(this.value)">
+                </div>
+                <div id="emailHelpBlock" class="form-text"></div>
+                <div class="input-group my-3">
+                    <span class="input-group-text">비밀번호</span>
+                    <input type="password" class="form-control" name="memberPassword" onkeyup="password_fn(this.value)">
+                </div>
+                <div id="passwordHelpBlock" class="form-text">
+                    Your password must be 8-20 characters long, contain letters, numbers, and special characters, and must not contain spaces, or emoji.
+                </div>
+                <div class="input-group my-3">
+                    <span class="input-group-text">비밀번호 확인</span>
+                    <input type="password" class="form-control" name="memberPassCheck" onkeyup="passCheck_fn(this.value)">
+                </div>
+                <div id="passwordCheckBlock" class="form-text"></div>
+                <div class="input-group my-3">
+                    <span class="input-group-text">이름</span>
+                    <input class="form-control" name="memberName">
+                </div>
+                <div class="input-group my-3">
+                    <span class="input-group-text">전화번호</span>
+                    <input class="form-control" name="memberMobile">
+                </div>
+                <div class="input-group my-3">
+                    <span class="input-group-text">생년월일</span>
+                    <input type="date" class="form-control" name="memberBirth">
+                </div>
+                <div class="text-end">
+                    <input type="button" class="btn btn-outline-success" value="저장" onclick="save_fn()">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{component/footer :: footer}"></div>
+</body>
+
+<script th:inline="javascript">
+    let emailCheck = false;
+    let passForm = false;
+    let passCheck = false;
+
+    const duplicate_check = (email) =>{
+        const emailHelpBlock = document.getElementById("emailHelpBlock");
+        if (email == ""){
+            emailHelpBlock.text = ""
+            emailCheck = false;
+        }else{
+            axios({
+                method : "post",
+                url : "/member/duplicate",
+                params : {memberEmail : email}
+            }).then(req =>{
+                emailHelpBlock.innerText = "사용 가능한 이메일입니다."
+                emailHelpBlock.style.color = "green"
+                emailCheck = true;
+            }).catch(err =>{
+                emailHelpBlock.innerText = "사용할 수 없는 이메일입니다."
+                emailHelpBlock.style.color = "red"
+                emailCheck = false;
+            })
+        }
+    }
+
+    const save_fn = () => {
+        const saveForm = document.getElementById("save-form");
+        const memberEmail = document.querySelector("[name = 'memberEmail']");
+        const memberPassword = document.querySelector("[name = 'memberPassword']");
+        const memberPassCheck = document.querySelector("[name = 'memberPassCheck']");
+        const memberName = document.querySelector("[name = 'memberName']");
+        if(memberEmail.value == ""){
+            alert("이메일을 입력해주세요")
+            memberEmail.focus();
+        }else if (!emailCheck){
+            alert("이메일이 중복됩니다.")
+            memberEmail.value = "";
+            memberEmail.focus();
+        }else if (memberPassword == ""){
+            alert("비밀번호를 입력해주세요")
+            memberPassword.focus();
+        }else if (!passForm){
+            alert("비밀번호 형식이 틀렸습니다.")
+            memberPassword.value = "";
+            memberPassword.focus();
+        }else if (!passCheck){
+            alert("비밀번호를 다시 확인해주세요")
+            memberPassCheck.focus();
+        }else if (memberName == ""){
+            alert("이름을 입력해주세요")
+            memberEmail.focus();
+        }else{
+            if(confirm("해당 정보로 가입하시겠습니까?")){
+                saveForm.submit();
+            }
+        }
+    }
+
+    const password_fn = (password) =>{
+        const reg = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/
+        const passwordHelpBlock = document.getElementById("passwordHelpBlock");
+        if (password==""){
+            passwordHelpBlock.innerText = "Your password must be 8-20 characters long, contain letters, numbers, and special characters, and must not contain spaces, or emoji.";
+            passwordHelpBlock.style.color = "gray";
+            passForm = false;
+        }else {
+            if(reg.test(password)){
+                passwordHelpBlock.innerText = "You can use this";
+                passwordHelpBlock.style.color = "green";
+                passForm = true;
+            }else {
+                passwordHelpBlock.innerText = "You can't use this. please rewrite a password";
+                passwordHelpBlock.style.color = "red";
+                passForm = false;
+            }
+        }
+    }
+
+    const passCheck_fn = (passwordChecking) =>{
+        const password = document.querySelector("[name = 'memberPassword']").value;
+        const passwordCheckBlock = document.getElementById("passwordCheckBlock");
+        if (passwordChecking == "") {
+            passwordCheckBlock.innerText = ""
+            passCheck = false;
+        }else{
+            if(password == passwordChecking){
+                passwordCheckBlock.innerText = "Password are matching"
+                passwordCheckBlock.style.color = "green"
+                passCheck = true;
+            }else {
+                passwordCheckBlock.innerText = "Password are not matching"
+                passwordCheckBlock.style.color = "red"
+                passCheck = false;
+            }
+        }
+    }
+</script>
+</html>
