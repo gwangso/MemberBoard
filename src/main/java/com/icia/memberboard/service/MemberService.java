@@ -5,12 +5,18 @@ import com.icia.memberboard.entity.MemberEntity;
 import com.icia.memberboard.entity.MemberFileEntity;
 import com.icia.memberboard.repository.MemberFileRepository;
 import com.icia.memberboard.repository.MemberRepository;
+import com.icia.memberboard.util.UtilClass;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -37,11 +43,35 @@ public class MemberService {
     }
 
     public boolean duplicate(String memberEmail) {
-        MemberEntity memberEntity = memberRepository.findByMemberEmail(memberEmail);
+        MemberEntity memberEntity = memberRepository.findByMemberEmail(memberEmail).orElseThrow(() -> new NoSuchElementException());
         if (memberEntity==null){
             return true;
         }else{
             return false;
+        }
+    }
+
+    public Page<MemberDTO> findAll(int page) {
+        page = page-1;
+        int pageLimit = 10;
+        Page<MemberEntity> memberEntities = memberRepository.findAll(PageRequest.of(page,pageLimit, Sort.by(Sort.Direction.DESC, "id")));
+        Page<MemberDTO> memberList = memberEntities.map(memberEntity ->
+            MemberDTO.builder()
+                    .id(memberEntity.getId())
+                    .memberEmail(memberEntity.getMemberEmail())
+                    .memberName(memberEntity.getMemberName())
+                    .createdAt(UtilClass.dateTimeFormat(memberEntity.getCreatedAt()))
+                    .build());
+        return memberList;
+    }
+
+    public MemberDTO login(MemberDTO memberDTO) {
+        MemberEntity memberEntity = memberRepository.findByMemberEmail(memberDTO.getMemberEmail()).orElseThrow(() -> new NoSuchElementException());
+        MemberDTO result = MemberDTO.toMemberDTO(memberEntity);
+        if(result.getMemberPassword().equals(memberDTO.getMemberPassword())){
+            return result;
+        }else {
+            return null;
         }
     }
 }

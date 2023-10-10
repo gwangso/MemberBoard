@@ -1,5 +1,6 @@
 package com.icia.memberboard.entity;
 
+import com.icia.memberboard.util.UtilClass;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @Setter(AccessLevel.PRIVATE)
 @Table(name = "member_file_table")
 @Entity
-public class MemberFileEntity {
+public class MemberFileEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

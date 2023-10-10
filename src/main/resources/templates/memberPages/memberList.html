@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{component/config :: config}"></th:block>
+</head>
+<body>
+<div th:replace="~{component/header :: header}"></div>
+<div th:replace="~{component/nav :: nav}"></div>
+
+<div class="row m-5">
+    <div class="col">
+        <table class="table">
+            <thead class="table-dark">
+                <tr>
+                    <th>회원번호</th>
+                    <th>회원이메일</th>
+                    <th>회원이름</th>
+                    <th>회원가입일</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="member : ${memberList}">
+                    <td th:text="${member.id}"></td>
+                    <td th:text="${member.memberEmail}"></td>
+                    <td th:text="${member.memberName}"></td>
+                    <td th:text="${member.createdAt}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="container">
+            <ul class="pagination justify-content-center">
+                <li th:class="${memberList.first} ? 'disabled'" class="page-item">
+                    <!--첫페이지 요청 링크 /board?page=1 -->
+                    <a class="page-link" th:href="@{/member(page=1)}">
+                        <span>First</span>
+                    </a>
+                </li>
+
+                <li th:class="${memberList.first} ? 'disabled'" class="page-item">
+                    <!--boardList.first: isFirst()
+                        boardList.number: getNumber()-->
+                    <!--href 에 삼항연산자 사용-->
+                    <a class="page-link" th:href="${memberList.first} ? '#' : @{/member(page=${memberList.number})}">
+                        <!-- 사용자 3페이지, number 2 /board?page=2 -->
+                        <span>&lt;</span> <!-- < -->
+                    </a>
+                </li>
+
+                <!-- startPage ~ endPage 까지 숫자를 만들어주는 역할
+                    for(int page=startPage; page<=endPage; page++) -->
+                <li th:each="page: ${#numbers.sequence(startPage, endPage)}"
+                    th:class="${page == memberList.number + 1} ? 'page-item active'" class="page-item">
+                    <a th:if="${page != memberList.number + 1}" class="page-link" th:text="${page}" th:href="@{/member(page=${page})}"></a>
+                    <span th:if="${page == memberList.number + 1}" class="page-link" th:text="${page}"></span>
+                </li>
+
+                <!-- 다음 페이지 요청
+                    현재 3페이지를 보고 있다면 다음 페이지는 4페이지임.
+                    getNumber() 값은 2임.
+                    따라서 4페이지를 보고 싶다면 getNumber()+2를 해야 컨트롤러에 4를 요청할 수 있음. -->
+                <li th:class="${memberList.last} ? 'disabled'">
+                    <a class="page-link" th:href="${memberList.last} ? '#' : @{/member(page=${memberList.number + 2})}">
+                        <!-- 사용자 3페이지, number 2 /board?page=4 -->
+                        <span>&gt;</span> <!-- > -->
+                    </a>
+                </li>
+
+                <li th:class="${memberList.last} ? 'disabled'" class="page-item">
+                    <a class="page-link" th:href="@{/member(page=${memberList.totalPages})}">
+                        <span>Last</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{component/footer :: footer}"></div>
+</body>
+</html>

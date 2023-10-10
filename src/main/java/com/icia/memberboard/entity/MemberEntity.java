@@ -17,20 +17,27 @@ public class MemberEntity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(length = 100, unique = true, nullable = false)
     private String memberEmail;
+
     @Column(length = 20, nullable = false)
     private String memberPassword;
+
     @Column(length = 50, nullable = false)
     private String memberName;
+
     @Column(length = 20)
     private String memberMobile;
+
     @Column(length = 50)
     private String memberBirth;
+
     @Column
     private int fileAttached;
-    @OneToMany(mappedBy = "memberEntity", cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
-    private List<MemberFileEntity> memberFileEntity = new ArrayList<>();
+
+    @OneToMany(mappedBy = "memberEntity", cascade = CascadeType.REMOVE,orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<MemberFileEntity> memberFileEntityList = new ArrayList<>();
 
     public static MemberEntity toSaveEntity(MemberDTO memberDTO){
         MemberEntity memberEntity = new MemberEntity();
