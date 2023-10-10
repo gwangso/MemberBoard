@@ -13,7 +13,7 @@
 <div th:fragment="nav" id="nav">
     <nav class="navbar navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">Home</a>
+            <a class="navbar-brand" th:href="${session.loginEmail == null} ? @{/} : @{/member/main}">Home</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -31,17 +31,17 @@
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ">
-                    <li class="nav-item">
+                    <li class="nav-item" th:if="${session.loginEmail} == null">
                         <a class="nav-link" href="/member/save">회원가입</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" th:if="${session.loginEmail} == null">
                         <a class="nav-link" href="/member/login">로그인</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/member/logout">로그아웃</a>
+                    <li class="nav-item" th:if="${session.loginEmail} != null">
+                        <a class="nav-link" href="/member/detail" th:text="|${session.loginName}님, 안녕하세요|"></a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/member">회원목록</a>
+                    <li class="nav-item" th:if="${session.loginEmail} != null">
+                        <a class="nav-link" href="/member/logout">로그아웃</a>
                     </li>
                 </ul>
             </div>

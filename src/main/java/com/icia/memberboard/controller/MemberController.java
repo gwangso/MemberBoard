@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @RequestMapping("/member")
@@ -65,12 +66,16 @@ public class MemberController {
     @PostMapping("/login")
     private String login(@ModelAttribute MemberDTO memberDTO,
                          HttpSession session){
-        MemberDTO result = memberService.login(memberDTO);
-        if (result != null){
-            session.setAttribute("loginName", result.getMemberName());
-            session.setAttribute("loginEmail", result.getMemberEmail());
-            return "redirect:/member/main";
-        }else {
+        try{
+            MemberDTO result = memberService.login(memberDTO);
+            if (result != null){
+                session.setAttribute("loginName", result.getMemberName());
+                session.setAttribute("loginEmail", result.getMemberEmail());
+                return "redirect:/member/main";
+            }else {
+                return "redirect:/member/login?success=error1";
+            }
+        }catch (NoSuchElementException noSuchElementException){
             return "redirect:/member/login?success=error1";
         }
     }
@@ -78,5 +83,22 @@ public class MemberController {
     @GetMapping("/main")
     private String main(){
         return "memberPages/main";
+    }
+
+    @GetMapping("/logout")
+    private String main(HttpSession session){
+        session.removeAttribute("loginName");
+        session.removeAttribute("loginEmail");
+        return "redirect:/";
+    }
+
+    @GetMapping("/detail")
+    private String detail(HttpSession session,
+                          Model model){
+        String memberEmail = session.getAttribute("loginEmail").toString();
+        MemberDTO memberDTO = memberService.findByEmail(memberEmail);
+        model.addAttribute("member",memberDTO);
+        System.out.println(memberDTO.getStoredFilename());
+        return "memberPages/memberDetail";
     }
 }

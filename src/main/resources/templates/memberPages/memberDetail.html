@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{component/config :: config}"></th:block>
+</head>
+<body>
+<div th:replace="~{component/header :: header}"></div>
+<div th:replace="~{component/nav :: nav}"></div>
+
+<div class="row m-5">
+    <div class="col">
+        <div class="card p-5">
+            <div class="row justify-content-center">
+                <div class="col-auto" th:each="filename : ${member.storedFilename}">
+                    <img th:unless="${filename == null}" th:src="@{|/upload/${filename}}" height="180">
+                </div>
+                <div class="col-auto" th:if="${member.storedFilename.size() == 0}">
+                    <img src="https://placehold.jp/180x180.png">
+                </div>
+                <div class="col-auto">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th class="table-dark">이메일</th>
+                            <td th:text="${member.memberEmail}"></td>
+                        </tr>
+                        <tr>
+                            <th class="table-dark">이름</th>
+                            <td th:text="${member.memberName}"></td>
+                        </tr>
+                        <tr>
+                            <th class="table-dark">생년월일</th>
+                            <td th:text="${member.memberBirth}"></td>
+                        </tr>
+                        <tr>
+                            <th class="table-dark">전화번호</th>
+                            <td th:text="${member.memberMobile}"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div id="check-password" style="display: none;">
+            <form id="delete-form" th:action="@{|/member/delete/${member.id}|}" method="get">
+                <div class="input-group">
+                    <span class="input-group-text">비밀번호</span>
+                    <input class="form-control" name="memberPassword" type="password">
+                    <button class="btn btn-danger">삭제</button>
+                </div>
+            </form>
+        </div>
+        <div id="update-delete">
+            <button class="btn btn-outline-danger" onclick="open_form()">삭제</button>
+            <button class="btn btn-outline-warning" onclick="to_update()">수정</button>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{component/footer :: footer}"></div>
+</body>
+</html>

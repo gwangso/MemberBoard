@@ -11,12 +11,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -65,6 +65,7 @@ public class MemberService {
         return memberList;
     }
 
+    @Transactional
     public MemberDTO login(MemberDTO memberDTO) {
         MemberEntity memberEntity = memberRepository.findByMemberEmail(memberDTO.getMemberEmail()).orElseThrow(() -> new NoSuchElementException());
         MemberDTO result = MemberDTO.toMemberDTO(memberEntity);
@@ -73,5 +74,11 @@ public class MemberService {
         }else {
             return null;
         }
+    }
+
+    @Transactional
+    public MemberDTO findByEmail(String memberEmail) {
+        MemberEntity memberEntity = memberRepository.findByMemberEmail(memberEmail).orElseThrow(() -> new NoSuchElementException());
+        return MemberDTO.toMemberDTO(memberEntity);
     }
 }
