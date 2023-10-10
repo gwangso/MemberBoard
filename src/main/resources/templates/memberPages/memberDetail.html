@@ -40,21 +40,78 @@
             </div>
         </div>
         <div id="check-password" style="display: none;">
-            <form id="delete-form" th:action="@{|/member/delete/${member.id}|}" method="get">
+            <form id="pass-form" >
                 <div class="input-group">
                     <span class="input-group-text">비밀번호</span>
                     <input class="form-control" name="memberPassword" type="password">
-                    <button class="btn btn-danger">삭제</button>
+                    <button class="btn btn-danger">확인</button>
                 </div>
             </form>
         </div>
         <div id="update-delete">
-            <button class="btn btn-outline-danger" onclick="open_form()">삭제</button>
-            <button class="btn btn-outline-warning" onclick="to_update()">수정</button>
+            <button class="btn btn-outline-danger" onclick="open_form('delete')">삭제</button>
+            <button class="btn btn-outline-warning" onclick="open_form('update')">수정</button>
         </div>
     </div>
 </div>
 
 <div th:replace="~{component/footer :: footer}"></div>
 </body>
+
+<script th:inline="javascript">
+    const open_form = (type) => {
+        const passCheckArea = document.getElementById("check-password");
+        passCheckArea.style.display = "block";
+        passCheckArea.innerHTML =
+            `<form id="pass-form" type="${type}" method="get">
+                <div class="input-group">
+                    <span class="input-group-text">비밀번호</span>
+                    <input class="form-control" name="memberPassword" type="password">
+                    <button class="btn btn-danger">확인</button>
+                </div>
+            </form>`
+    }
+
+    const passForm = document.getElementById("pass-form");
+
+    passForm.addEventListener("submit", event => {
+        event.preventDefault();
+        const inputPass = document.querySelector("[name = 'memberPassword']")
+        const type = inputPass.type;
+        const memberEmail = [[${member.memberEmail}]]
+        const id = [[${member.id}]];
+        console.log(type);
+        console.log(id);
+        if(inputPass.value == ""){
+            alert("비밀번호를 입력해주세요")
+            inputPass.focus();
+        }else{
+            axios({
+                method:"post",
+                url:"/member/passCheck",
+                params:{memberEmail : memberEmail ,memberPassword : inputPass}
+            }).then(req => {
+                if(type == "delete"){
+                    if (confirm("정말로 탈퇴하시겠습니까?")){
+                        axios({
+                            method:"delete",
+                            url:"/member/delete",
+                            data:{id:id}
+                        }).then(req =>{
+                            alert("탈퇴가 완료되었습니다.")
+                            location.href = "/";
+                        }).catch(err =>{
+                            alert("알 수 없는 이유로 삭제에 실패했습니다.")
+                        })
+                    }
+                }else if (type == "update"){
+                    location.href = `/member/update/${id}`
+                }
+            }).catch(err => {
+                alert("비밀번호가 틀렸습니다.")
+            })
+        }
+    })
+
+</script>
 </html>

@@ -81,4 +81,14 @@ public class MemberService {
         MemberEntity memberEntity = memberRepository.findByMemberEmail(memberEmail).orElseThrow(() -> new NoSuchElementException());
         return MemberDTO.toMemberDTO(memberEntity);
     }
+
+
+    public void delete(Long id) {
+        memberRepository.deleteById(id);
+    }
+
+    public MemberDTO findById(Long id) {
+        MemberEntity memberEntity = memberRepository.findById(id).orElseThrow(() -> new NoSuchElementException());
+        return MemberDTO.toMemberDTO(memberEntity);
+    }
 }

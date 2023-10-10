@@ -98,7 +98,34 @@ public class MemberController {
         String memberEmail = session.getAttribute("loginEmail").toString();
         MemberDTO memberDTO = memberService.findByEmail(memberEmail);
         model.addAttribute("member",memberDTO);
-        System.out.println(memberDTO.getStoredFilename());
         return "memberPages/memberDetail";
+    }
+
+    @PostMapping("/passCheck")
+    private ResponseEntity passCheck(@RequestBody MemberDTO memberDTO){
+        try{
+            MemberDTO result = memberService.login(memberDTO);
+            if (result != null){
+                return new ResponseEntity<>(HttpStatus.OK);
+            }else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        }catch (NoSuchElementException noSuchElementException){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/member/delete")
+    private ResponseEntity delete(@RequestParam("id") Long id){
+        memberService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/member/update/{id}")
+    private String update(@PathVariable("id") Long id,
+                          Model model){
+        MemberDTO memberDTO = memberService.findById(id);
+        model.addAttribute("member", memberDTO);
+        return "memberPages/memberUpdate";
     }
 }
