@@ -33,11 +33,11 @@ public class MemberController {
 
     @PostMapping("/duplicate")
     private ResponseEntity duplicate(@RequestParam("memberEmail") String memberEmail){
-        boolean result = memberService.duplicate(memberEmail);
-        if(result){
-            return new ResponseEntity<>(HttpStatus.OK);
-        }else {
+        try{
+            boolean result = memberService.duplicate(memberEmail);
             return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }catch (NoSuchElementException noSuchElementException){
+            return new ResponseEntity<>(HttpStatus.OK);
         }
     }
 
