@@ -39,6 +39,9 @@ public class MemberEntity extends BaseEntity{
     @OneToMany(mappedBy = "memberEntity", cascade = CascadeType.REMOVE,orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MemberFileEntity> memberFileEntityList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "memberEntity", cascade = CascadeType.REMOVE,orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BoardEntity> boardEntityList = new ArrayList<>();
+
     public static MemberEntity toSaveEntity(MemberDTO memberDTO){
         MemberEntity memberEntity = new MemberEntity();
         memberEntity.setMemberEmail(memberDTO.getMemberEmail());
