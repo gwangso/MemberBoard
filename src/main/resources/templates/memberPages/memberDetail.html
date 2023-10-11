@@ -12,7 +12,7 @@
         <div class="card p-5">
             <div class="row justify-content-center">
                 <div class="col-auto" th:each="filename : ${member.storedFilename}">
-                    <img th:unless="${filename == null}" th:src="@{|/upload/${filename}}" height="180">
+                    <img th:if="${filename != null}" th:src="@{|/upload/${filename}}" height="180">
                 </div>
                 <div class="col-auto" th:if="${member.storedFilename.size() == 0}">
                     <img src="https://placehold.jp/180x180.png">

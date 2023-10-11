@@ -61,16 +61,14 @@ public class MemberEntity extends BaseEntity{
         return memberEntity;
     }
 
-    public static MemberEntity toUpdateEntity(MemberDTO memberDTO) {
-        MemberEntity memberEntity = new MemberEntity();
+    public static MemberEntity toUpdateEntity(MemberDTO memberDTO, MemberEntity memberEntity) {
         memberEntity.setMemberName(memberDTO.getMemberName());
         memberEntity.setMemberMobile(memberDTO.getMemberMobile());
         memberEntity.setMemberBirth(memberDTO.getMemberBirth());
         return memberEntity;
     }
 
-    public static MemberEntity toUpdateEntityWithFile(MemberDTO memberDTO) {
-        MemberEntity memberEntity = new MemberEntity();
+    public static MemberEntity toUpdateEntityWithFile(MemberDTO memberDTO,  MemberEntity memberEntity) {
         memberEntity.setMemberName(memberDTO.getMemberName());
         memberEntity.setMemberMobile(memberDTO.getMemberMobile());
         memberEntity.setMemberBirth(memberDTO.getMemberBirth());

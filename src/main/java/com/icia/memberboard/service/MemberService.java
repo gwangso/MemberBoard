@@ -27,7 +27,7 @@ public class MemberService {
     private final MemberFileRepository memberFileRepository;
 
     public void save(MemberDTO memberDTO) throws IOException {
-        if(memberDTO.getMemberProfile() == null){
+        if(memberDTO.getMemberProfile().isEmpty()){
             MemberEntity memberEntity = MemberEntity.toSaveEntity(memberDTO);
             memberRepository.save(memberEntity);
         }else {
@@ -108,46 +108,52 @@ public class MemberService {
         // 기존 MemberFileEntity : memberFileEntity
         // 새로운 데이터 : memberDTO
         // 새로운 데이터의 파일 : memberProfile
-
         // 1. 새로운 Entity에 파일이 있는지 확인
         MultipartFile memberProfile = memberDTO.getMemberProfile();
 
         // 2. 새로운 Entity에 파일 이 없으면 기존파일 정보 덮어씌우기
         // 이 경우 MemberFileEntity는 변경 필요 없음
         MemberEntity memberEntity = memberRepository.findById(memberDTO.getId()).orElseThrow(() -> new NoSuchElementException());
-        if(memberProfile == null){
-            memberEntity = memberEntity.toUpdateEntity(memberDTO);
+        if(memberProfile.isEmpty()){
+            memberEntity = MemberEntity.toUpdateEntity(memberDTO, memberEntity);
             memberRepository.save(memberEntity);
         }else{
             // 3. 새로운 파일 정의
             String originalFilename = memberProfile.getOriginalFilename();
             String storedFilename = System.currentTimeMillis() + "_" + originalFilename;
 
-            // 4. 새로운 파일 저장
-            String savePath = "D:\\memberBoard_img\\" + storedFilename;
-            memberProfile.transferTo(new File(savePath));
-
-            // 5. 기존에는 파일이 있는지 확인
-            if (memberEntity.getMemberFileEntityList().get(0) != null){
+            // 5. 기존 파일이 있는지 확인
+            if (memberEntity.getMemberFileEntityList().isEmpty()){
+                // 8. 파일이 없다면 새롭게 저장하기
+                System.out.println("파일이 없음");
+                MemberFileEntity memberFileEntity = MemberFileEntity.toSaveEntity(originalFilename, storedFilename, memberEntity);
+                System.out.println("memberFileEntity 잘 됐나?");
+                memberFileRepository.save(memberFileEntity);
+            }else{
+                System.out.println("파일이 있음");
                 // 6. 파일이 있다면 기존 파일 삭제
                 for(String savedFilename : MemberDTO.toMemberDTO(memberEntity).getStoredFilename()){
                     File savedFile = new File("D:\\memberBoard_img\\"+savedFilename);
                     savedFile.delete();
                 }
+                System.out.println("파일삭제");
                 // 7. 멤버파일엔티티 가져오기
                 List<MemberFileEntity> memberFileEntityList = memberEntity.getMemberFileEntityList();
                 for(MemberFileEntity memberFileEntity : memberFileEntityList){
                     // 8. 멤버파일엔티티 고치고 업데이트하기
-                    memberFileEntity = memberFileEntity.toUpdateEntity(originalFilename,storedFilename);
+                    memberFileEntity = MemberFileEntity.toUpdateEntity(originalFilename,storedFilename,memberFileEntity);
+                    System.out.println("잘 됐나?");
                     memberFileRepository.save(memberFileEntity);
                 }
-            }else{
-                // 8. 파일이 없다면 새롭게 저장하기
-                MemberFileEntity memberFileEntity = MemberFileEntity.toSaveEntity(originalFilename, storedFilename, memberEntity);
-                memberFileRepository.save(memberFileEntity);
             }
+            // 4. 새로운 파일 저장
+            String savePath = "D:\\memberBoard_img\\" + storedFilename;
+            memberProfile.transferTo(new File(savePath));
+            // 파일 저장
+            System.out.println("파일저장");
+
             // 9. 멤버엔티티 수정
-            memberEntity = memberEntity.toUpdateEntityWithFile(memberDTO);
+            memberEntity = MemberEntity.toUpdateEntityWithFile(memberDTO, memberEntity);
             memberRepository.save(memberEntity);
         }
 

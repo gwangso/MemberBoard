@@ -1,6 +1,5 @@
 package com.icia.memberboard.entity;
 
-import com.icia.memberboard.util.UtilClass;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,8 +34,7 @@ public class MemberFileEntity{
         return memberFileEntity;
     }
 
-    public static MemberFileEntity toUpdateEntity(String originalFilename, String storedFilename) {
-        MemberFileEntity memberFileEntity = new MemberFileEntity();
+    public static MemberFileEntity toUpdateEntity(String originalFilename, String storedFilename, MemberFileEntity memberFileEntity) {
         memberFileEntity.setOriginalFilename(originalFilename);
         memberFileEntity.setStoredFilename(storedFilename);
         return memberFileEntity;
