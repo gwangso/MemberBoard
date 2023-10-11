@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{component/config :: config}"></th:block>
+</head>
+<body>
+<div th:replace="~{component/header :: header}"></div>
+<div th:replace="~{component/nav :: nav}"></div>
+
+<div class="row m-5">
+    <div class="col">
+        <form action="/board/save" method="post" enctype="multipart/form-data">
+            <div class="input-group mb-3">
+                <span class="input-group-text">제목</span>
+                <input class="form-control" name="boardTitle">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">작성자</span>
+                <input class="form-control" name="boardWriter">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">비밀번호</span>
+                <input type="password" class="form-control" name="boardPass">
+            </div>
+            <div class="input-group mb-3">
+                <textarea class="form-control" name="boardContents"></textarea>
+            </div>
+            <div class="input-group mb-3">
+                <input type="file" class="form-control" name="boardFile" multiple>
+            </div>
+            <div class="text-end">
+                <input type="submit" class="btn btn-outline-primary" value="저장">
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{component/footer :: footer}"></div>
+</body>
+</html>
