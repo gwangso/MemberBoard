@@ -12,6 +12,7 @@
         <div class="card p-5">
             <h6 th:if="${success == 'error1'}" style="background-color: red; color: white">아이디 혹은 비밀번호가 틀렸습니다.</h6>
             <form id="login-form" action="/member/login" method="post">
+                <input type="hidden" name="redirectURI" th:value="${redirectURI}">
                 <div class="row justify-content-center align-content-center">
                     <div class="col">
                         <div class="input-group my-3">

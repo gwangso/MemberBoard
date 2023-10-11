@@ -57,21 +57,24 @@ public class MemberController {
     }
 
     @GetMapping("/login")
-    private String login(@RequestParam(value = "success", required = false, defaultValue = "") String success,
+    private String login(@RequestParam(value="redirectURI", defaultValue = "/member/main") String redirectURI,
+                         @RequestParam(value = "success", required = false, defaultValue = "") String success,
                          Model model){
         model.addAttribute("success", success);
+        model.addAttribute("redirectURI", redirectURI);
         return "memberPages/login";
     }
 
     @PostMapping("/login")
     private String login(@ModelAttribute MemberDTO memberDTO,
+                         @RequestParam("redirectURI") String redirectURI,
                          HttpSession session){
         try{
             MemberDTO result = memberService.login(memberDTO);
             if (result != null){
                 session.setAttribute("loginName", result.getMemberName());
                 session.setAttribute("loginEmail", result.getMemberEmail());
-                return "redirect:/member/main";
+                return "redirect:"+redirectURI;
             }else {
                 return "redirect:/member/login?success=error1";
             }
@@ -139,10 +142,16 @@ public class MemberController {
     }
 
     @PostMapping("/update")
-    private String update(@ModelAttribute MemberDTO memberDTO) throws IOException {
-
-        memberService.update(memberDTO);
-        return "redirect:/member/detail";
-
+    private String update(@ModelAttribute MemberDTO memberDTO){
+        try{
+            memberService.update(memberDTO);
+            return "redirect:/member/detail";
+        }catch (NoSuchElementException noSuchElementException){
+            return "redirect:/";
+        }catch (IOException ioException){
+            return "redirect:/member/main";
+        }catch (Exception exception){
+            return "redirect:/member/update/"+memberDTO.getId();
+        }
     }
 }
