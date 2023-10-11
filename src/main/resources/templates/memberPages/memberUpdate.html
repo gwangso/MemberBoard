@@ -11,41 +11,33 @@
     <div class="col">
 
         <div class="card p-5">
-            <form id="save-form" action="/member/save" method="post" enctype="multipart/form-data">
-                <div class="input-group my-3">
+            <form id="update-form" method="post" action="/member/update" enctype="multipart/form-data">
+                <div style="display: none">
+                    <input type="text" class="form-control" name="id" th:value="${member.id}">
+                    <input type="password" class="form-control" name="memberPassword" th:value="${member.memberPassword}">
+                </div>
+                <div class="my-3">
                     <input type="file" class="form-control" name="memberProfile">
                 </div>
                 <div class="input-group my-3">
                     <span class="input-group-text">이메일</span>
-                    <input class="form-control" name="memberEmail" onblur="duplicate_check(this.value)">
+                    <input class="form-control" name="memberEmail" th:value="${member.memberEmail}" readonly>
                 </div>
                 <div id="emailHelpBlock" class="form-text"></div>
                 <div class="input-group my-3">
-                    <span class="input-group-text">비밀번호</span>
-                    <input type="password" class="form-control" name="memberPassword" onkeyup="password_fn(this.value)">
-                </div>
-                <div id="passwordHelpBlock" class="form-text">
-                    Your password must be 8-20 characters long, contain letters, numbers, and special characters, and must not contain spaces, or emoji.
-                </div>
-                <div class="input-group my-3">
-                    <span class="input-group-text">비밀번호 확인</span>
-                    <input type="password" class="form-control" name="memberPassCheck" onkeyup="passCheck_fn(this.value)">
-                </div>
-                <div id="passwordCheckBlock" class="form-text"></div>
-                <div class="input-group my-3">
                     <span class="input-group-text">이름</span>
-                    <input class="form-control" name="memberName">
+                    <input class="form-control" name="memberName" th:value="${member.memberName}">
                 </div>
                 <div class="input-group my-3">
                     <span class="input-group-text">전화번호</span>
-                    <input class="form-control" name="memberMobile">
+                    <input class="form-control" name="memberMobile" th:value="${member.memberMobile}">
                 </div>
                 <div class="input-group my-3">
                     <span class="input-group-text">생년월일</span>
-                    <input type="date" class="form-control" name="memberBirth">
+                    <input type="date" class="form-control" name="memberBirth" th:value="${member.memberBirth}">
                 </div>
                 <div class="text-end">
-                    <input type="button" class="btn btn-outline-success" value="저장" onclick="save_fn()">
+                    <input type="button" class="btn btn-outline-success" value="저장" onclick="update_fn()">
                 </div>
             </form>
         </div>
@@ -55,4 +47,38 @@
 
 <div th:replace="~{component/footer :: footer}"></div>
 </body>
+
+<script th:inline="javascript">
+    const update_fn = () => {
+        const id = document.querySelector("[name = 'id']").value;
+        const memberEmail = document.querySelector("[name = 'memberEmail']").value;
+        const memberPassword = document.querySelector("[name = 'memberPassword']").value;
+        const memberMobile = document.querySelector("[name = 'memberMobile']").value;
+        const memberBirth = document.querySelector("[name = 'memberBirth']").value;
+        const memberName = document.querySelector("[name = 'memberName']").value;
+        const memberProfile = document.querySelector("[name = 'memberProfile']").value
+
+/*
+        let frm = new FormData();
+        frm.append("id", id);
+        frm.append('memberEmail', memberEmail);
+        frm.append('memberPassword', memberPassword);
+        frm.append('memberMobile', memberMobile);
+        frm.append('memberBirth', memberBirth);
+        frm.append('memberName', memberName);
+        frm.append('memberProfile', memberProfile);
+*/
+
+        if(memberName.value == ""){
+            alert("이름을 입력해주세요")
+            memberName.focus();
+        }else{
+            if(confirm("정보를 수정하시겠습니까?")){
+                document.getElementById("update-form").submit();
+                alert("수정이 완료되었습니다.")
+            }
+        }
+    }
+</script>
+
 </html>

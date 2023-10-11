@@ -94,7 +94,7 @@
             alert("이메일이 중복됩니다.")
             memberEmail.value = "";
             memberEmail.focus();
-        }else if (memberPassword == ""){
+        }else if (memberPassword.value == ""){
             alert("비밀번호를 입력해주세요")
             memberPassword.focus();
         }else if (!passForm){
@@ -104,7 +104,7 @@
         }else if (!passCheck){
             alert("비밀번호를 다시 확인해주세요")
             memberPassCheck.focus();
-        }else if (memberName == ""){
+        }else if (memberName.value == ""){
             alert("이름을 입력해주세요")
             memberEmail.focus();
         }else{

@@ -40,11 +40,11 @@
             </div>
         </div>
         <div id="check-password" style="display: none;">
-            <form id="pass-form" >
+            <form id="check-form" type="" method="get">
                 <div class="input-group">
                     <span class="input-group-text">비밀번호</span>
-                    <input class="form-control" name="memberPassword" type="password">
-                    <button class="btn btn-danger">확인</button>
+                    <input class="form-control" name="inputPass" type="password">
+                    <input id="checking" type="submit" class="btn btn-danger" value="확인">
                 </div>
             </form>
         </div>
@@ -62,52 +62,50 @@
     const open_form = (type) => {
         const passCheckArea = document.getElementById("check-password");
         passCheckArea.style.display = "block";
-        passCheckArea.innerHTML =
-            `<form id="pass-form" type="${type}" method="get">
-                <div class="input-group">
-                    <span class="input-group-text">비밀번호</span>
-                    <input class="form-control" name="memberPassword" type="password">
-                    <button class="btn btn-danger">확인</button>
-                </div>
-            </form>`
+        document.getElementById("check-form").type = type;
     }
 
-    const passForm = document.getElementById("pass-form");
-
-    passForm.addEventListener("submit", event => {
+    document.getElementById("check-form").addEventListener("submit", (event) =>{
         event.preventDefault();
-        const inputPass = document.querySelector("[name = 'memberPassword']")
-        const type = inputPass.type;
-        const memberEmail = [[${member.memberEmail}]]
+        const inputPass = document.querySelector("[name = 'inputPass']").value
+        const type = document.getElementById("check-form").type;
+        const memberEmail = [[${member.memberEmail}]];
         const id = [[${member.id}]];
-        console.log(type);
-        console.log(id);
-        if(inputPass.value == ""){
+        if(inputPass == ""){
             alert("비밀번호를 입력해주세요")
             inputPass.focus();
         }else{
             axios({
                 method:"post",
-                url:"/member/passCheck",
-                params:{memberEmail : memberEmail ,memberPassword : inputPass}
-            }).then(req => {
+                url:"/member/detail",
+                data:{memberEmail : memberEmail ,
+                    memberPassword : inputPass}
+            }).then(res => {
                 if(type == "delete"){
                     if (confirm("정말로 탈퇴하시겠습니까?")){
                         axios({
                             method:"delete",
-                            url:"/member/delete",
-                            data:{id:id}
-                        }).then(req =>{
+                            url:`/member/detail`,
+                            params:{id:id}
+                        }).then(res =>{
                             alert("탈퇴가 완료되었습니다.")
                             location.href = "/";
                         }).catch(err =>{
-                            alert("알 수 없는 이유로 삭제에 실패했습니다.")
+                            console.log(err)
+                            if(err.code == "NOT_FOUND"){
+                                alert("회원을 찾을 수 없습니다.")
+                            }else if (err.code == "CONFLICT") {
+                                alert("파일을 삭제할 수 없습니다.")
+                            }else{
+                                alert("알 수 없는 이유로 삭제에 실패했습니다.")
+                            }
                         })
                     }
                 }else if (type == "update"){
                     location.href = `/member/update/${id}`
                 }
             }).catch(err => {
+                console.log(err)
                 alert("비밀번호가 틀렸습니다.")
             })
         }

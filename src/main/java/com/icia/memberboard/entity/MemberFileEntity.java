@@ -27,11 +27,18 @@ public class MemberFileEntity{
     private MemberEntity memberEntity;
 
 
-    public static MemberFileEntity toMemberFileEntity(String originalFilename, String storedFilename, MemberEntity savedEntity) {
+    public static MemberFileEntity toSaveEntity(String originalFilename, String storedFilename, MemberEntity savedEntity) {
         MemberFileEntity memberFileEntity = new MemberFileEntity();
         memberFileEntity.setOriginalFilename(originalFilename);
         memberFileEntity.setStoredFilename(storedFilename);
         memberFileEntity.setMemberEntity(savedEntity);
+        return memberFileEntity;
+    }
+
+    public static MemberFileEntity toUpdateEntity(String originalFilename, String storedFilename) {
+        MemberFileEntity memberFileEntity = new MemberFileEntity();
+        memberFileEntity.setOriginalFilename(originalFilename);
+        memberFileEntity.setStoredFilename(storedFilename);
         return memberFileEntity;
     }
 }
