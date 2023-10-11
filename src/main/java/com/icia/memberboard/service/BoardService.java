@@ -27,7 +27,7 @@ public class BoardService {
     private final BoardFileRepository boardFileRepository;
     private final MemberRepository memberRepository;
 
-    public Page<BoardDTO> findAll(int page, String query, String type) {
+    public Page<BoardDTO> findAll(int page, String query, int type) {
         page = page - 1;
         int pageLimit = 5;
 
@@ -36,9 +36,9 @@ public class BoardService {
         if(query.equals("")){
             boardEntities = boardRepository.findAll(PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
         }else{
-            if(type.equals("boardTitle")){
+            if(type==1){
                 boardEntities = boardRepository.findByBoardTitleContaining(query, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
-            }else if (type.equals("boardWriter")){
+            }else if (type==2){
                 boardEntities = boardRepository.findByBoardWriterContaining(query, PageRequest.of(page, pageLimit, Sort.by(Sort.Direction.DESC, "id")));
             }
         }

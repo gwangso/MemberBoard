@@ -35,7 +35,7 @@ public class BoardController {
     @GetMapping()
     private String list(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
                         @RequestParam(value = "query", required = false, defaultValue = "") String query,
-                        @RequestParam(value = "type", required = false, defaultValue = "") String type,
+                        @RequestParam(value = "type", required = false, defaultValue = "1") int type,
                         Model model){
         Page<BoardDTO> boardDTOPage = boardService.findAll(page,query,type);
         int blockLimit = 3;
