@@ -17,7 +17,7 @@
             </div>
             <div class="input-group mb-3">
                 <span class="input-group-text">작성자</span>
-                <input class="form-control" name="boardWriter" th:value="${session.loginEmail}">
+                <input class="form-control" name="boardWriter" th:value="${session.loginEmail}" readonly>
             </div>
             <div class="input-group mb-3">
                 <textarea class="form-control" name="boardContents"></textarea>

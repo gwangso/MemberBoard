@@ -31,7 +31,7 @@
             <tbody>
             <tr th:each="board : ${boardList}" th:onclick="to_detail([[${board.id}]])" style="cursor: pointer">
                 <th th:text="${board.boardTitle}"></th>
-                <th th:text="${board.boardWriter}"></th>
+                <th th:text="|${board.boardWriter}(${board.writerEmail})|"></th>
                 <th th:text="${board.boardHits}"></th>
                 <th th:text="${board.createdAt}"></th>
             </tr>
@@ -90,7 +90,7 @@
 <script th:inline="javascript">
 
     const to_detail = (id) =>{
-        location.href = "/board/"+id;
+        location.href = "/board/detail/"+id;
     }
 </script>
 

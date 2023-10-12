@@ -1,6 +1,7 @@
 package com.icia.memberboard.controller;
 
 import com.icia.memberboard.dto.BoardDTO;
+import com.icia.memberboard.dto.CommentDTO;
 import com.icia.memberboard.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -48,6 +50,17 @@ public class BoardController {
         model.addAttribute("type",type);
         model.addAttribute("page",page);
         return "boardPages/boardList";
+    }
+
+    @GetMapping("/detail/{id}")
+    private String detail(@PathVariable("id") Long id,
+                          Model model){
+        boardService.increaseHits(id);
+        BoardDTO boardDTO = boardService.findById(id);
+        model.addAttribute("board", boardDTO);
+        List<CommentDTO> commentDTOList = null;
+        model.addAttribute("commentList", commentDTOList);
+        return "boardPages/boardDetail";
     }
 }
 

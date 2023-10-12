@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{component/config :: config}"></th:block>
+</head>
+<body>
+<div th:replace="~{component/header :: header}"></div>
+<div th:replace="~{component/nav :: nav}"></div>
+
+<div class="container m-5">
+    <div class="row">
+        <div class="col">
+            <div class="mb-4 ms-3">
+                <h4 th:text="${board.boardTitle}" style="display: inline"></h4><h5 class="ms-3" th:text="|(${board.boardHits})|" style="display: inline"></h5>
+            </div>
+            <div class="d-flex justify-content-between ms-3 mb-5">
+                <h5 th:text="|작성자 : ${board.boardWriter} (${board.writerEmail})|"></h5>
+                <h6 th:text="|작성일 : ${board.createdAt}|"></h6>
+            </div>
+            <hr>
+            <div class="p-4 mb-3 mx-4">
+                <p th:text="${board.boardContents}"></p>
+                <did class="card p-4 mt-4" th:if="${board.storedFileName.size() != 0}">
+                    <div class="row">
+                        <div th:each="fileName : ${board.storedFileName}" class="col-4">
+                            <img th:src="@{|/upload/${fileName}}" width="100%">
+                        </div>
+                    </div>
+                </did>
+            </div>
+            <div class="text-end mb-5">
+                <button class="btn btn-info" onclick="pass_area('update')">글수정</button>
+                <button class="btn btn-danger" onclick="pass_area('delete')">글삭제</button>
+            </div>
+            <div id="pass-area" style="display: none"></div>
+
+            <hr>
+            <div class="container">
+                <div class="mb-3">
+                    <h5>댓글</h5>
+                </div>
+                <div class="mb-4">
+                    <form id="commentArea" action="/comment/save" method="post">
+                        <input type="hidden" name="commentWriter" th:value="${session.loginEmail}">
+                        <div class="input-group">
+                            <span class="input-group-text">제목</span>
+                            <input type="text" class="form-control" name="commentTitle">
+                        </div>
+                        <textarea class="form-control" name="commentContents"></textarea>
+                        <input type="button" class="btn btn-outline-secondary" value="작성" onclick="comment_save()">
+                    </form>
+                </div>
+                <div id="comment-area">
+                    <div class="mb-3" th:each="comment : ${commentList}">
+                        <h6 th:text="${comment.commentWriter}"></h6>
+                        <p th:text="${comment.commentContents}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<hr>
+<div th:replace="~{component/footer :: footer}"></div>
+</body>
+
+<script th:inline="javascript">
+    const pass_area = (type) =>{
+        const passArea = document.getElementById("pass-area");
+        passArea.style.display = "block";
+        passArea.innerHTML =
+            `<div class="input-group">
+                <span class="input-group-text">비밀번호</span>
+                <input type="password" class="form-control" name="password">
+                <input type="button" class="btn btn-outline-danger" onclick="pass_check('${type}')" value="확인">
+            </div>`
+    }
+
+    const pass_check = (type) =>{
+        const passInput =document.querySelector("[name='password']").value;
+        const id = [[${board.id}]];
+        if(type== "update"){
+            axios({
+                method:"get",
+                url:`/board/update`,
+                params:{id : id,
+                password :passInput}
+            }).then(req => {
+                location.href = `/board/update/${id}`;
+            }).catch(err => {
+                alert("비밀번호가 틀렸습니다.");
+            })
+        }else if (type == "delete"){
+            if(confirm("정말로 삭제하시겠습니까?")){
+                axios({
+                    method: "delete",
+                    url: `/board/${id}`,
+                    params: {password : passInput}
+                }).then(req => {
+                    alert("삭제 성공")
+                    location.href = "/board";
+                }).catch(err =>{
+                    alert("삭제 실패")
+                });
+            }
+        }
+    }
+
+    const comment_save = () =>{
+        const commentWriter = document.querySelector("[name='commentWriter']").value;
+        const commentContents = document.querySelector("[name='commentContents']").value;
+        const boardId = [[${board.id}]]
+        const commentArea = document.getElementById("comment-area");
+        if(commentWriter == ""){
+            alert("댓글 작성자를 명시해주세요");
+        }else if (commentContents == ""){
+            alert("댓글을 작성해주세요");
+        }else{
+            axios({
+                method:"post",
+                url:"/comment/save",
+                data:{commentWriter : commentWriter,
+                    commentContents : commentContents},
+                params:{boardId : boardId}
+            }).then(req =>{
+                commentArea.innerHTML = '';
+                req.data.forEach(data => {
+                    commentArea.innerHTML +=
+                        `<div class="mb-3">
+                            <h6>${data.commentWriter}</h6>
+                            <p>${data.commentContents}</p>
+                        </div>`
+                })
+            }).catch(err =>{
+                console.log(err)
+            });
+        }
+    }
+</script>
+
+</html>

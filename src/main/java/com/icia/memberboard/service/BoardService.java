@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -45,6 +46,7 @@ public class BoardService {
         Page<BoardDTO> boardDTOPage =
                 boardEntities.map(boardEntity ->
                         BoardDTO.builder()
+                                .id(boardEntity.getId())
                                 .boardTitle(boardEntity.getBoardTitle())
                                 .boardWriter(boardEntity.getBoardWriter())
                                 .boardHits(boardEntity.getBoardHits())
@@ -73,4 +75,16 @@ public class BoardService {
             }
         }
     }
+
+    @Transactional
+    public BoardDTO findById(Long id) {
+        BoardEntity boardEntity = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException());
+        return BoardDTO.toDTO(boardEntity);
+    }
+
+    @Transactional // jpql로 작성한 메서드 호출할 때
+    public void increaseHits(Long id) {
+        boardRepository.increaseHits(id);
+    }
+
 }
