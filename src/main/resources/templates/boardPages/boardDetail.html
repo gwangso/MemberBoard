@@ -28,11 +28,15 @@
                     </div>
                 </did>
             </div>
-            <div class="text-end mb-5 mx-5" th:style="${session.loginEmail != board.writerEmail}? 'display:none'">
-                <button class="btn btn-outline-info" onclick="pass_area('update')">글수정</button>
-                <button class="btn btn-outline-danger" onclick="pass_area('delete')">글삭제</button>
+            <div class="row mx-5 mb-1" th:style="${session.loginEmail != board.writerEmail}? 'display:none'">
+                <div class="col-6 p-0">
+                    <button class="form-control btn btn-outline-info" onclick="pass_area('update')">글수정</button>
+                </div>
+                <div class="col-6 p-0">
+                    <button class="form-control btn btn-outline-danger" onclick="pass_area('delete')">글삭제</button>
+                </div>
             </div>
-            <div id="pass-area" style="display: none"></div>
+           <div id="pass-area" class="mb-5 mx-5" style="display: none"></div>
 
             <hr>
             <div class="container">
@@ -90,6 +94,7 @@
 
     const pass_check = (type) =>{
         const passInput =document.querySelector("[name='password']").value;
+        const writerEmail = [[${board.writerEmail}]]
         const id = [[${board.id}]];
         if(type== "update"){
             axios({
@@ -106,8 +111,10 @@
             if(confirm("정말로 삭제하시겠습니까?")){
                 axios({
                     method: "delete",
-                    url: `/board/${id}`,
-                    params: {password : passInput}
+                    url: `/board/delete/${id}`,
+                    params: {
+                        writerEmail : writerEmail,
+                        password : passInput}
                 }).then(req => {
                     alert("삭제 성공")
                     location.href = "/board";

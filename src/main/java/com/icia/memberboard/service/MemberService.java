@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -156,6 +155,16 @@ public class MemberService {
             // 9. 멤버엔티티 수정
             memberEntity = MemberEntity.toUpdateEntityWithFile(memberDTO, memberEntity);
             memberRepository.save(memberEntity);
+        }
+
+    }
+
+    public boolean checkPassword(String memberEmail, String password) {
+        MemberEntity memberEntity = memberRepository.findByMemberEmail(memberEmail).orElseThrow(() -> new NoSuchElementException());
+        if(memberEntity.getMemberPassword().equals(password)){
+            return true;
+        }else{
+            return false;
         }
 
     }

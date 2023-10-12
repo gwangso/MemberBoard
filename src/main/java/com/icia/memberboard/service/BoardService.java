@@ -28,6 +28,7 @@ public class BoardService {
     private final BoardFileRepository boardFileRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public Page<BoardDTO> findAll(int page, String query, int type) {
         page = page - 1;
         int pageLimit = 5;
@@ -51,6 +52,7 @@ public class BoardService {
                                 .boardWriter(boardEntity.getBoardWriter())
                                 .boardHits(boardEntity.getBoardHits())
                                 .createdAt(UtilClass.dateTimeFormat(boardEntity.getCreatedAt()))
+                                .writerEmail(boardEntity.getMemberEntity().getMemberEmail())
                                 .build()
                 );
         return boardDTOPage;
@@ -79,7 +81,8 @@ public class BoardService {
     @Transactional
     public BoardDTO findById(Long id) {
         BoardEntity boardEntity = boardRepository.findById(id).orElseThrow(() -> new NoSuchElementException());
-        return BoardDTO.toDTO(boardEntity);
+        BoardDTO boardDTO = BoardDTO.toDTO(boardEntity);
+        return boardDTO;
     }
 
     @Transactional // jpql로 작성한 메서드 호출할 때
@@ -87,4 +90,16 @@ public class BoardService {
         boardRepository.increaseHits(id);
     }
 
+    @Transactional
+    public void delete(Long id) {
+        BoardEntity boardEntity = boardRepository.findById(id).orElseThrow(()-> new NoSuchElementException());
+        if(boardEntity.getFileAttached() == 1){
+            for(BoardFileEntity boardFileEntity: boardEntity.getBoardFileEntityList()){
+                String storedFilename = boardFileEntity.getStoredFilename();
+                File savedFile = new File("D:\\memberBoard_img//"+storedFilename);
+                savedFile.delete();
+            }
+        }
+        boardRepository.delete(boardEntity);
+    }
 }

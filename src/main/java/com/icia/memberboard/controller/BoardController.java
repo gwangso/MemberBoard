@@ -4,14 +4,18 @@ import com.icia.memberboard.dto.BoardDTO;
 import com.icia.memberboard.dto.CommentDTO;
 import com.icia.memberboard.service.BoardService;
 import com.icia.memberboard.service.CommentService;
+import com.icia.memberboard.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Controller
 @RequiredArgsConstructor
@@ -19,6 +23,7 @@ import java.util.List;
 public class BoardController {
     private final BoardService boardService;
     private final CommentService commentService;
+    private final MemberService memberService;
 
     @GetMapping("/save")
     private String save(){
@@ -63,6 +68,23 @@ public class BoardController {
         List<CommentDTO> commentDTOList = commentService.findAllByBoardId(id);
         model.addAttribute("commentList", commentDTOList);
         return "boardPages/boardDetail";
+    }
+
+    @DeleteMapping("/delete/{id}")
+    private ResponseEntity delete(@PathVariable("id") Long id,
+                                  @RequestParam("writerEmail") String writerEmail,
+                                  @RequestParam("password") String password){
+        try{
+            boolean result = memberService.checkPassword(writerEmail, password);
+            if (result){
+                boardService.delete(id);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }catch (NoSuchElementException noSuchElementException){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
 
