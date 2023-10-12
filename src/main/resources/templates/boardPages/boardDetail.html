@@ -20,9 +20,9 @@
             <hr>
             <div class="p-4 mb-3 mx-4">
                 <p th:text="${board.boardContents}"></p>
-                <did class="card p-4 mt-4" th:if="${board.storedFileName.size() != 0}">
+                <did class="card p-4 mt-4" th:if="${board.storedFilename.size() != 0}">
                     <div class="row">
-                        <div th:each="fileName : ${board.storedFileName}" class="col-4">
+                        <div th:each="fileName : ${board.storedFilename}" class="col-4">
                             <img th:src="@{|/upload/${fileName}}" width="100%">
                         </div>
                     </div>
@@ -98,10 +98,11 @@
         const id = [[${board.id}]];
         if(type== "update"){
             axios({
-                method:"get",
-                url:`/board/update`,
-                params:{id : id,
-                password :passInput}
+                method:"post",
+                url:`/member/memberCheck`,
+                params:{
+                    writerEmail : writerEmail,
+                    password :passInput},
             }).then(req => {
                 location.href = `/board/update/${id}`;
             }).catch(err => {

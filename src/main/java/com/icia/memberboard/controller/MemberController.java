@@ -10,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.NoSuchElementException;
@@ -154,5 +153,22 @@ public class MemberController {
         }catch (Exception exception){
             return "redirect:/member/update/"+memberDTO.getId();
         }
+    }
+
+    @PostMapping("/memberCheck")
+    private ResponseEntity passCheck(@RequestParam("password") String memberPassword,
+                                     @RequestParam("writerEmail") String memberEmail){
+        try{
+            boolean result = memberService.checkPassword(memberEmail, memberPassword);
+            if (result){
+                return new ResponseEntity<>(HttpStatus.OK);
+            }else{
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }catch (NoSuchElementException noSuchElementException){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+
     }
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{component/config :: config}"></th:block>
+</head>
+<body>
+<div th:replace="~{component/header :: header}"></div>
+<div th:replace="~{component/nav :: nav}"></div>
+
+<div class="container m-5">
+    <div class="row">
+        <div class="col">
+            <form name="update-form" action="/board/update" method="post" enctype="multipart/form-data">
+                <div style="display: none;">
+                    <input name="id" th:value="${board.id}" readonly>
+                    <input name="boardHits" th:value="${board.boardHits}" readonly>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">제목</span>
+                    <input class="form-control" name="boardTitle" th:value="${board.boardTitle}">
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">작성자</span>
+                    <input class="form-control" name="boardWriter" th:value="${board.boardWriter}" readonly>
+                </div>
+                <div class="input-group mb-3">
+                    <textarea class="form-control" name="boardContents" th:text="${board.boardContents}"></textarea>
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">파일삭제</span>
+                    <div class="align-self-center" th:each="boardFile : ${boardFileList}"> &emsp;
+                        <input name="deleteFileList" class="form-check-input" type="checkbox" th:value="${boardFile.get('storedFilename')}" id="flexCheckDefault">
+                        <label class="form-check-label" for="flexCheckDefault" th:text="${boardFile.get('originalFilename')}"></label> &ensp;&nbsp;&emsp;
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="file" class="form-control" name="boardFile" multiple>
+                </div>
+                <div class="text-end">
+                    <input type="submit" class="btn btn-outline-primary" value="수정" th:onclick="update_fn([[${board.id}]])">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<hr>
+<div th:replace="~{component/footer :: footer}"></div>
+</body>
+
+<script th:inline="javascript">
+
+</script>
+
+</html>

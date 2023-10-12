@@ -14,8 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -84,6 +83,41 @@ public class BoardController {
             }
         }catch (NoSuchElementException noSuchElementException){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/update/{id}")
+    private String update(@PathVariable("id") Long id,
+                                  Model model){
+        try{
+            BoardDTO boardDTO = boardService.findById(id);
+            List<String> originalFilenameList = boardDTO.getOriginalFilename();
+            List<String> storedFilenameList = boardDTO.getStoredFilename();
+
+            List<Map<String, String>> boardFileList = new ArrayList<>();
+            for (int i = 0; i< originalFilenameList.size(); i++){
+                Map<String, String> boardFile = new HashMap<>();
+                boardFile.put("originalFilename", originalFilenameList.get(i));
+                boardFile.put("storedFilename", storedFilenameList.get(i));
+                boardFileList.add(boardFile);
+            }
+            model.addAttribute("board", boardDTO);
+            model.addAttribute("boardFileList",boardFileList);
+            return "boardPages/boardUpdate";
+        }catch (NoSuchElementException noSuchElementException){
+            return "redirect:/board/detail/"+id;
+        }
+    }
+
+    @PostMapping("/update")
+    private String update(@ModelAttribute BoardDTO boardDTO,
+                        @RequestParam(value = "deleteFileList", required = false, defaultValue = "") List<String> deleteFileList){
+        try {
+            System.out.println("컨트롤러 들어오나");
+            boardService.update(boardDTO, deleteFileList);
+            return "redirect:/board/detail/"+boardDTO.getId();
+        } catch (IOException e) {
+            return "redirect:/board/update/"+boardDTO.getId();
         }
     }
 }
