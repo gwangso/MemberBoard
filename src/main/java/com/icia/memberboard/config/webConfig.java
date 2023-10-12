@@ -22,7 +22,7 @@ public class webConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(1) // 해당 인터셉터의 우선순위
                 .addPathPatterns("/**") // 인터셉터로 체크할 주소(모든주소)
-                .excludePathPatterns("/", "/member/save", "/member/login", "/member/login/axios",
+                .excludePathPatterns("/", "/member/save", "/member/login", "/member/login/axios", "/member/duplicate",
                         "/board",
                         "/js/**", "/css/**", "/images/**",
                         "/*.ico", "/favicon/**"); // 인터셉터 검증을 하지 않을 주소

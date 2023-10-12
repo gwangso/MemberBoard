@@ -59,17 +59,17 @@
     let passForm = false;
     let passCheck = false;
 
-    const duplicate_check = (email) =>{
+    const duplicate_check = (memberEmail) =>{
         const emailHelpBlock = document.getElementById("emailHelpBlock");
-        if (email == ""){
+        if (memberEmail == ""){
             emailHelpBlock.text = ""
             emailCheck = false;
         }else{
             axios({
                 method : "post",
                 url : "/member/duplicate",
-                params : {memberEmail : email}
-            }).then(req =>{
+                params : {memberEmail : memberEmail}
+            }).then(res =>{
                 emailHelpBlock.innerText = "사용 가능한 이메일입니다."
                 emailHelpBlock.style.color = "green"
                 emailCheck = true;

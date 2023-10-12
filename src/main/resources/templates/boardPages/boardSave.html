@@ -10,17 +10,14 @@
 <div class="row m-5">
     <div class="col">
         <form action="/board/save" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="memberEmail" th:value="${session.loginEmail}">
             <div class="input-group mb-3">
                 <span class="input-group-text">제목</span>
                 <input class="form-control" name="boardTitle">
             </div>
             <div class="input-group mb-3">
                 <span class="input-group-text">작성자</span>
-                <input class="form-control" name="boardWriter">
-            </div>
-            <div class="input-group mb-3">
-                <span class="input-group-text">비밀번호</span>
-                <input type="password" class="form-control" name="boardPass">
+                <input class="form-control" name="boardWriter" th:value="${session.loginEmail}">
             </div>
             <div class="input-group mb-3">
                 <textarea class="form-control" name="boardContents"></textarea>

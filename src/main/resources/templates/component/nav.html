@@ -26,8 +26,12 @@
                         <a class="nav-link" href="/board">글목록</a>
                     </li>
                 </ul>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <form action="/board" method="get" class="d-flex" role="search">
+                    <select name="type" class="form-select me-2 w-50">
+                        <option value="boardTitle" th:selected="${type==null or type=='1'}">제목</option>
+                        <option value="boardWriter" th:selected="${type=='2'}">작성자</option>
+                    </select>
+                    <input class="form-control me-2 " type="search" name="query" placeholder="검색어를 입력하세요" aria-label="Search" th:value="${query==null? '':query}">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ">

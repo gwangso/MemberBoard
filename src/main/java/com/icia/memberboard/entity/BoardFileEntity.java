@@ -24,4 +24,12 @@ public class BoardFileEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
     private BoardEntity boardEntity;
+
+    public static BoardFileEntity toSaveFile(String originalFilename, String storedFilename, BoardEntity boardEntity) {
+        BoardFileEntity boardFileEntity = new BoardFileEntity();
+        boardFileEntity.setOriginalFilename(originalFilename);
+        boardFileEntity.setStoredFilename(storedFilename);
+        boardFileEntity.setBoardEntity(boardEntity);
+        return boardFileEntity;
+    }
 }

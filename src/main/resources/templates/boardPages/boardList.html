@@ -9,6 +9,16 @@
 
 <div class="row m-5">
     <div class="col">
+        <div id="search-area mb-5">
+            <form action="/board" method="get" class="d-flex" role="search">
+                <select name="type" class="form-select me-2 w-50">
+                    <option value="1" th:selected="${type==null or type==1}">제목</option>
+                    <option value="2" th:selected="${type==2}">작성자</option>
+                </select>
+                <input class="form-control me-2 " type="search" name="query" placeholder="검색어를 입력하세요" aria-label="Search" th:value="${query==null? '':query}">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
         <table class="table mb-5">
             <thead>
             <tr class="table-dark">
@@ -29,7 +39,7 @@
         </table>
         <div class="container">
             <ul class="pagination justify-content-center">
-                <li class="page-item">
+                <li class="page-item" th:class="${boardList.first} ? 'disabled'">
                     <!--첫페이지 요청 링크 /board?page=1 -->
                     <a class="page-link" th:href="@{/board(page=1, type=${type}, query=${query})}">
                         <span>First</span>
@@ -64,8 +74,7 @@
                         <span>&gt;</span> <!-- > -->
                     </a>
                 </li>
-
-                <li class="page-item">
+                <li class="page-item" th:class="${boardList.last} ? 'disabled'">
                     <a class="page-link" th:href="@{/board(page=${boardList.totalPages}, type=${type}, q=${q})}">
                         <span>Last</span>
                     </a>
