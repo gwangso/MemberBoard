@@ -3,6 +3,7 @@ package com.icia.memberboard.controller;
 import com.icia.memberboard.dto.BoardDTO;
 import com.icia.memberboard.dto.CommentDTO;
 import com.icia.memberboard.service.BoardService;
+import com.icia.memberboard.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequestMapping("/board")
 public class BoardController {
     private final BoardService boardService;
+    private final CommentService commentService;
 
     @GetMapping("/save")
     private String save(){
@@ -58,7 +60,7 @@ public class BoardController {
         boardService.increaseHits(id);
         BoardDTO boardDTO = boardService.findById(id);
         model.addAttribute("board", boardDTO);
-        List<CommentDTO> commentDTOList = null;
+        List<CommentDTO> commentDTOList = commentService.findAllByBoardId(id);
         model.addAttribute("commentList", commentDTOList);
         return "boardPages/boardDetail";
     }

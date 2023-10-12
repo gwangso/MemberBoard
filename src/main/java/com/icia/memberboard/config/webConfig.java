@@ -24,7 +24,7 @@ public class webConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**") // 인터셉터로 체크할 주소(모든주소)
                 .excludePathPatterns("/", "/member/save", "/member/login", "/member/login/axios", "/member/duplicate",
                         "/board","/board/detail/**",
-                        "/upload/**",
+                        "/upload/**", "/comment/**",
                         "/js/**", "/css/**", "/images/**",
                         "/*.ico", "/favicon/**"); // 인터셉터 검증을 하지 않을 주소
     }

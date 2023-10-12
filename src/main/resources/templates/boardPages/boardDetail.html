@@ -28,16 +28,16 @@
                     </div>
                 </did>
             </div>
-            <div class="text-end mb-5">
-                <button class="btn btn-info" onclick="pass_area('update')">글수정</button>
-                <button class="btn btn-danger" onclick="pass_area('delete')">글삭제</button>
+            <div class="text-end mb-5 mx-5" th:style="${session.loginEmail != board.writerEmail}? 'display:none'">
+                <button class="btn btn-outline-info" onclick="pass_area('update')">글수정</button>
+                <button class="btn btn-outline-danger" onclick="pass_area('delete')">글삭제</button>
             </div>
             <div id="pass-area" style="display: none"></div>
 
             <hr>
             <div class="container">
-                <div class="mb-3">
-                    <h5>댓글</h5>
+                <div class="my-4">
+                    <h4 class="ms-5">댓글</h4>
                 </div>
                 <div class="mb-4">
                     <form id="commentArea" action="/comment/save" method="post">
@@ -47,13 +47,22 @@
                             <input type="text" class="form-control" name="commentTitle">
                         </div>
                         <textarea class="form-control" name="commentContents"></textarea>
-                        <input type="button" class="btn btn-outline-secondary" value="작성" onclick="comment_save()">
+                        <div class="input-group">
+                            <input type="button" class="form-control btn btn-secondary" value="작성" onclick="comment_save()">
+                        </div>
                     </form>
                 </div>
+
                 <div id="comment-area">
-                    <div class="mb-3" th:each="comment : ${commentList}">
-                        <h6 th:text="${comment.commentWriter}"></h6>
-                        <p th:text="${comment.commentContents}"></p>
+                    <div class="card pt-4">
+                        <div class="mb-3" th:each="comment : ${commentList}">
+                            <h5 class="mx-4 mb-2" th:text="|${comment.commentTitle} ( ${comment.commentWriter} )|"></h5>
+                            <p class="mx-5" th:text="${comment.commentContents}"></p>
+                            <div class="text-end mx-4" th:style="${session.loginEmail != comment.commentWriter}? 'display:none'">
+                                <button class="btn btn-outline-danger">삭제</button>
+                                <button class="btn btn-outline-info">수정</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -111,27 +120,35 @@
 
     const comment_save = () =>{
         const commentWriter = document.querySelector("[name='commentWriter']").value;
+        const commentTitle = document.querySelector("[name='commentTitle']").value;
         const commentContents = document.querySelector("[name='commentContents']").value;
         const boardId = [[${board.id}]]
         const commentArea = document.getElementById("comment-area");
         if(commentWriter == ""){
-            alert("댓글 작성자를 명시해주세요");
+            alert("로그인이 필요한 기능입니다.");
+            location.href = `/member/login?redirectURI=/board/detail/${boardId}`
+        }else if (commentTitle == ""){
+            alert("제목을 작성해주세요");
         }else if (commentContents == ""){
             alert("댓글을 작성해주세요");
         }else{
             axios({
                 method:"post",
                 url:"/comment/save",
-                data:{commentWriter : commentWriter,
-                    commentContents : commentContents},
-                params:{boardId : boardId}
-            }).then(req =>{
+                data:{
+                    commentTitle : commentTitle,
+                    commentWriter : commentWriter,
+                    commentContents : commentContents,
+                    boardId : boardId},
+            }).then(res =>{
                 commentArea.innerHTML = '';
-                req.data.forEach(data => {
+                res.data.forEach(data => {
                     commentArea.innerHTML +=
-                        `<div class="mb-3">
-                            <h6>${data.commentWriter}</h6>
-                            <p>${data.commentContents}</p>
+                        `<div class="card pt-4">
+                            <div class="mb-4">
+                                <h5 class="mx-4">${data.commentTitle} ( ${data.commentWriter} )</h5>
+                                <p class="mx-5">${data.commentContents}</p>
+                            </div>
                         </div>`
                 })
             }).catch(err =>{

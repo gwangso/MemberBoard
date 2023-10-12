@@ -17,14 +17,16 @@ public class CommentDTO {
     private String commentWriter;
     private String commentContents;
     private String createdAt;
+    private Long boardId;
 
-    private static CommentDTO toDTO(CommentEntity commentEntity){
+    public static CommentDTO toDTO(CommentEntity commentEntity){
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setId(commentEntity.getId());
         commentDTO.setCommentTitle(commentEntity.getCommentTitle());
         commentDTO.setCommentWriter(commentEntity.getCommentWriter());
         commentDTO.setCommentContents(commentEntity.getCommentContents());
         commentDTO.setCreatedAt(UtilClass.dateTimeFormat(commentEntity.getCreatedAt()));
-        return null;
+        commentDTO.setBoardId(commentEntity.getBoardEntity().getId());
+        return commentDTO;
     }
 }
